@@ -7,7 +7,7 @@ const TOKEN_LENGTH = 64;
 const TOKEN_KEY_LENGTH = "auth_token_web=".length;
 
 class LessonReserver {
-  constructor(studioCode, lessonId, interval = 5000) {
+  constructor(studioCode, lesson, interval = 5000) {
     this.logger = logger;
     this.httpClient = axios.create({
       withCredentials: true,
@@ -16,12 +16,12 @@ class LessonReserver {
       }
     });
     this.studioCode = studioCode;
-    this.lessonId = lessonId;
+    this.lesson = lesson;
     this.interval = interval;
   }
 
   async signIn(email, password) {
-    logger("Sign in");
+    logger("ログイン");
     const res = await this.httpClient.post(
       "https://www.b-monster.jp/api/member/signin",
       `mail_address=${email}&password=${password}`,
@@ -39,7 +39,7 @@ class LessonReserver {
       TOKEN_KEY_LENGTH + TOKEN_LENGTH
     );
     this.authToken = authToken;
-    logger("Sign in success");
+    logger("ログインに成功しました");
     return res.data;
   }
 
@@ -48,11 +48,11 @@ class LessonReserver {
   }
 
   async waitUntilBagAvaiable() {
-    logger("Wait until bag avaiable...");
+    logger("バッグ取得開始...");
     let ids = await this.fetchAvailableBagIds();
 
     while (ids.length === 0) {
-      await this.sleep(this.interval)
+      await this.sleep(this.interval);
       ids = await this.fetchAvailableBagIds();
     }
 
@@ -60,10 +60,10 @@ class LessonReserver {
   }
 
   async fetchAvailableBagIds() {
-    logger("Fetch available bag ids...");
+    logger("予約可能なバッグをチェック中...");
     const { data } = await this.httpClient.get(
       `https://www.b-monster.jp/reserve/punchbag?lesson_id=${
-        this.lessonId
+        this.lesson.lessonId
       }&studio_code=${this.studioCode}`
     );
     const dom = new JSDOM(data);
@@ -76,18 +76,22 @@ class LessonReserver {
       availabledIds.push(Number(bag.id.substring(3)));
     }
 
-    logger("Available bag ids:", availabledIds.join(","));
+    if (availabledIds.length > 0) {
+      logger("予約可能なバッグ:", availabledIds.join(","));
+    } else {
+      logger("予約可能なバッグはありませんでした");
+    }
 
     return availabledIds;
   }
 
   async fetchOnetimeToken(bagId) {
-    logger("Fetch one-time token");
+    logger("ワンタイムトークン取得中...");
     const res = await this.httpClient.get(
       // b-monster側のバグでstudioCodeにlessonIdが入っているが、怪しまれないようにそのままlessonIdを入れておく
       `https://www.b-monster.jp/reserve/confirm?lesson_id=${
-        this.lessonId
-      }&studio_code=${this.lessonId}&punchbag=${bagId}`,
+        this.lesson.lessonId
+      }&studio_code=${this.lesson.lessonId}&punchbag=${bagId}`,
       {
         headers: {
           cookie: `auth_token_web=${this.authToken};`
@@ -98,17 +102,19 @@ class LessonReserver {
     const dom = new JSDOM(res.data);
     const token = dom.window.document.querySelector("[name=one_time_token]");
 
-    logger("One-time token:", token.value);
+    logger("ワンタイムトークン:", token.value);
     return token.value;
   }
 
   async reserve(bagId) {
-    logger(`Reservation start -- BagId ${bagId}`);
+    logger(`${bagId}番のバッグを予約します`);
     const onetimeToken = await this.fetchOnetimeToken(bagId);
 
-    logger(`Reserving BagId ${bagId}...`);
-    return this.httpClient.post(
-      `https://www.b-monster.jp/api/reservation/${this.lessonId}/reserve`,
+    logger(`予約開始...`);
+    const res = this.httpClient.post(
+      `https://www.b-monster.jp/api/reservation/${
+        this.lesson.lessonId
+      }/reserve`,
       `onetime_token=${onetimeToken}&no_and_members=[{"no":"${bagId}"}]&pay_in_cash=&use_ticket=&rental_item_code=`,
       {
         headers: {
@@ -119,6 +125,13 @@ class LessonReserver {
         }
       }
     );
+    logger(
+      `${this.lesson.time} ${this.lesson.instructor} ${
+        this.lesson.mode
+      } ${bagId}番のバッグの予約が完了しました！`
+    );
+
+    return res;
   }
 }
 

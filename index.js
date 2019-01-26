@@ -17,6 +17,27 @@ const askDate = {
   }))
 };
 
+const askInterval = {
+  type: "select",
+  name: "interval",
+  message: "チェックするインターバルを選択してください",
+  initial: 1,
+  choices: [
+    {
+      title: "2秒(30分前のキャンセル待ちをどうしても取りたい場合、長時間実行禁止)",
+      value: 2000
+    },
+    {
+      title: "5秒(推奨)",
+      value: 5000
+    },
+    {
+      title: "1分(夜寝ながら予約したい場合はこれ)",
+      value: 60000
+    }
+  ]
+};
+
 const askStudio = {
   type: "select",
   name: "studioId",
@@ -35,35 +56,47 @@ const askStudio = {
 function askLesson(lessons) {
   return {
     type: "select",
-    name: "lessonId",
+    name: "lesson",
     message: "レッスンを選択してください",
-    choices: lessons.map(l => ({
-      title: `${l.time} ${l.instructor} ${l.mode}`,
-      value: l.lessonId
+    choices: lessons.map(lesson => ({
+      title: `${lesson.time} ${lesson.instructor} ${lesson.mode}`,
+      value: lesson
     }))
   };
 }
 
 async function main() {
+  const { interval } = await prompts(askInterval);
+  if (!interval) {
+    return;
+  }
+
   const { date } = await prompts(askDate);
+  if (!date) {
+    return;
+  }
+
   const { studioId } = await prompts(askStudio);
+  if (!studioId) {
+    return;
+  }
 
   const lessons = await getLessons(date, studioId);
-
-  if (!lessons) {
-    console.log("選択可能なレッスンが見つかりませんでした")
+  if (lessons.length === 0) {
+    console.log("選択可能なレッスンが見つかりませんでした");
+    return;
   }
-  const { lessonId } = await prompts(askLesson(lessons));
 
-  if (studioId && lessonId) {
-    reserver = new LessonReserver(studioId, lessonId);
-
-    const bagId = await reserver.waitUntilBagAvaiable();
-    await reserver.signIn(email, password);
-    await reserver.reserve(bagId);
-  } else {
-    console.log("スタジオとレッスンを選択してください");
+  const { lesson } = await prompts(askLesson(lessons));
+  if (!lesson) {
+    return;
   }
+
+  reserver = new LessonReserver(studioId, lesson, interval);
+
+  const bagId = await reserver.waitUntilBagAvaiable();
+  await reserver.signIn(email, password);
+  await reserver.reserve(bagId);
 }
 
 main();
