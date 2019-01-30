@@ -20,7 +20,7 @@ async function getLessons(date, studioId) {
 }
 
 function matchLessonColumns(lessonColumns, date) {
-  const dateText = date.format("M月DD日");
+  const dateText = date.format("M月D日");
   for (const column of lessonColumns) {
     const columnDateText = column.querySelector("h3.smooth-text").textContent;
 
