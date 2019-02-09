@@ -4,6 +4,8 @@
   "description": "",
   "main": "./index.js",
   "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "@types/dotenv": "^6.1.0",
     "@types/jsdom": "^12.2.1",
     "@types/prompts": "^1.2.0",
@@ -11,23 +13,37 @@
     "dayjs": "^1.8.0",
     "dotenv": "^6.2.0",
     "jsdom": "^13.2.0",
-    "prompts": "^2.0.1"
+    "prompts": "^2.0.1",
+    "react": "^16.8.1",
+    "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "styled-components": "^4.1.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.0",
     "@commitlint/config-conventional": "^7.5.0",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
+    "@types/react-router-dom": "^4.3.1",
+    "electron": "^4.0.4",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.3",
+    "react-dom": "^16.8.1",
     "ts-loader": "^5.3.3",
     "tslint": "^5.12.1",
     "tslint-loader": "^3.5.4",
+    "tslint-react": "^3.6.0",
     "typescript": "^3.3.3",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "dev": "webpack -w",
+    "build": "webpack",
+    "electron": "electron ."
   },
   "husky": {
     "hooks": {
@@ -36,7 +52,10 @@
     }
   },
   "lint-staged": {
-    "*.ts": ["tslint --fix", "git add"]
+    "*.ts": [
+      "tslint --fix",
+      "git add"
+    ]
   },
   "author": "koiketakayuki",
   "license": "ISC"
