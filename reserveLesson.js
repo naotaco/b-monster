@@ -8,7 +8,7 @@ async function reserveLesson(authToken, lesson, bagId) {
   const onetimeToken = await fetchOnetimeToken(authToken, lesson, bagId);
 
   logger(`予約開始...`);
-  const res = axios.post(
+  const res = await axios.post(
     `https://www.b-monster.jp/api/reservation/${lesson.lessonId}/reserve`,
     `onetime_token=${onetimeToken}&no_and_members=[{"no":"${bagId}"}]&pay_in_cash=&use_ticket=&rental_item_code=`,
     {
