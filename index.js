@@ -1,7 +1,8 @@
 const prompts = require("prompts");
 const getDateList = require("./getDateList");
 const getLessons = require("./getLessons");
-const LessonReserver = require("./LessonReserver");
+const authenticate = require("./authenticate");
+const reserveLesson = require("./reserveLesson");
 const waitUntilBagAvaiable = require("./waitUntilBagAvailable");
 
 require("dotenv").config();
@@ -93,11 +94,9 @@ async function main() {
     return;
   }
 
-  reserver = new LessonReserver(studioId, lesson);
-
   const bagId = await waitUntilBagAvaiable(studioId, lesson.lessonId, interval);
-  await reserver.signIn(email, password);
-  await reserver.reserve(bagId);
+  const authToken = await authenticate(email, password);
+  await reserveLesson(authToken, lesson, bagId);
 }
 
 main();
