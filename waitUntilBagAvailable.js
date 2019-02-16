@@ -12,7 +12,7 @@ async function waitUntilBagAvaiable(studioCode, lessonId, interval) {
     ids = await fetchAvailableBagIds(studioCode, lessonId);
   }
 
-  return ids[0];
+  return ids;
 }
 
 async function fetchAvailableBagIds(studioCode, lessonId) {
