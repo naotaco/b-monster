@@ -2,6 +2,7 @@ const prompts = require("prompts");
 const getDateList = require("./getDateList");
 const getLessons = require("./getLessons");
 const LessonReserver = require("./LessonReserver");
+const waitUntilBagAvaiable = require("./waitUntilBagAvailable");
 
 require("dotenv").config();
 const email = process.env.BMONSTER_EMAIL;
@@ -92,9 +93,9 @@ async function main() {
     return;
   }
 
-  reserver = new LessonReserver(studioId, lesson, interval);
+  reserver = new LessonReserver(studioId, lesson);
 
-  const bagId = await reserver.waitUntilBagAvaiable();
+  const bagId = await waitUntilBagAvaiable(studioId, lesson.lessonId, interval);
   await reserver.signIn(email, password);
   await reserver.reserve(bagId);
 }

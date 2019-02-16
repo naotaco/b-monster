@@ -7,7 +7,7 @@ const TOKEN_LENGTH = 64;
 const TOKEN_KEY_LENGTH = "auth_token_web=".length;
 
 class LessonReserver {
-  constructor(studioCode, lesson, interval = 5000) {
+  constructor(studioCode, lesson) {
     this.logger = logger;
     this.httpClient = axios.create({
       withCredentials: true,
@@ -17,7 +17,6 @@ class LessonReserver {
     });
     this.studioCode = studioCode;
     this.lesson = lesson;
-    this.interval = interval;
   }
 
   async signIn(email, password) {
@@ -41,48 +40,6 @@ class LessonReserver {
     this.authToken = authToken;
     logger("ログインに成功しました");
     return res.data;
-  }
-
-  async sleep(msec) {
-    return new Promise(resolve => setTimeout(resolve, msec));
-  }
-
-  async waitUntilBagAvaiable() {
-    logger("バッグ取得開始...");
-    let ids = await this.fetchAvailableBagIds();
-
-    while (ids.length === 0) {
-      await this.sleep(this.interval);
-      ids = await this.fetchAvailableBagIds();
-    }
-
-    return ids[0];
-  }
-
-  async fetchAvailableBagIds() {
-    logger("予約可能なバッグをチェック中...");
-    const { data } = await this.httpClient.get(
-      `https://www.b-monster.jp/reserve/punchbag?lesson_id=${
-        this.lesson.lessonId
-      }&studio_code=${this.studioCode}`
-    );
-    const dom = new JSDOM(data);
-    const bags = dom.window.document.querySelectorAll(
-      "label.bag-check:not(.hidden)>input:not([disabled=disabled])"
-    );
-
-    const availabledIds = [];
-    for (const bag of bags) {
-      availabledIds.push(Number(bag.id.substring(3)));
-    }
-
-    if (availabledIds.length > 0) {
-      logger("予約可能なバッグ:", availabledIds.join(","));
-    } else {
-      logger("予約可能なバッグはありませんでした");
-    }
-
-    return availabledIds;
   }
 
   async fetchOnetimeToken(bagId) {
