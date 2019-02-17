@@ -2,6 +2,12 @@ const prompts = require("prompts");
 const getDateList = require("./getDateList");
 const getLessons = require("./getLessons");
 
+require("dotenv").config();
+const preferences = {
+  "0003": JSON.parse(process.env.EBISU_PREFERENCES),
+  "0004": JSON.parse(process.env.SHINJUKU_PREFERENCES)
+};
+
 async function askInfo() {
   const { interval } = await prompts(askInterval);
   if (!interval) {
@@ -31,7 +37,8 @@ async function askInfo() {
   return {
     interval,
     studioId,
-    lesson
+    lesson,
+    preferences: preferences[studioId] || []
   };
 }
 

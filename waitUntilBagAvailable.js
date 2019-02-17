@@ -1,4 +1,5 @@
 const logger = require("./logger");
+const { sleep } = require("./util");
 
 const axios = require("axios");
 const { JSDOM } = require("jsdom");
@@ -37,10 +38,6 @@ async function fetchAvailableBagIds(studioCode, lessonId) {
   }
 
   return availabledIds;
-}
-
-async function sleep(msec) {
-  return new Promise(resolve => setTimeout(resolve, msec));
 }
 
 module.exports = waitUntilBagAvaiable;
