@@ -4,8 +4,11 @@ const getLessons = require("./getLessons");
 
 require("dotenv").config();
 const preferences = {
+  "0001": JSON.parse(process.env.GINZA_PREFERENCES),
+  "0002": JSON.parse(process.env.AOYAMA_PREFERENCES),
   "0003": JSON.parse(process.env.EBISU_PREFERENCES),
-  "0004": JSON.parse(process.env.SHINJUKU_PREFERENCES)
+  "0004": JSON.parse(process.env.SHINJUKU_PREFERENCES),
+  "0006": JSON.parse(process.env.IKEBUKURO_PREFERENCES)
 };
 
 async function askInfo() {

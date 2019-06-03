@@ -16,8 +16,9 @@ cd b-monster
 npm install
 ```
 
-2. .envファイルを書き換える
+2. .env.sampleファイルを書き換える
 ```
+mv .env.sample .env
 BMONSTER_EMAIL=<メールアドレスを入力>
 BMONSTER_PASSWORD=<パスワードを入力>
 ```
