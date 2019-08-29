@@ -51,7 +51,7 @@ function buildLesson(div) {
   const mode = div.querySelector(".tt-mode").getAttribute("data-program");
 
   const link = div.querySelector("a").href;
-  lessonId = link.match(/lesson_id=(.+)&/)[1];
+  const lessonId = link.match(/lesson_id=(.+)&/)[1];
 
   return {
     time,
