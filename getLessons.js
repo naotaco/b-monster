@@ -46,11 +46,11 @@ function buildLessons(lessonColumn) {
 }
 
 function buildLesson(div) {
-  const time = div.querySelector(".tt-time").textContent;
-  const instructor = div.querySelector(".tt-instructor").textContent;
-  const mode = div.querySelector(".tt-mode").getAttribute("data-program");
+  const time = div.querySelector(".tt-time") ? div.querySelector(".tt-time").textContent : "";
+  const instructor = div.querySelector(".tt-instructor") ? div.querySelector(".tt-instructor").textContent : "";
+  const mode = div.querySelector(".tt-mode") ? div.querySelector(".tt-mode").getAttribute("data-program") : "";
 
-  const link = div.querySelector("a").href;
+  const link = div.querySelector("a") ? div.querySelector("a").href : "";
   const lessonId = link.match(/lesson_id=(.+)&/)[1];
 
   return {
