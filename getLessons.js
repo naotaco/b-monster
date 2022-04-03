@@ -2,9 +2,12 @@ const axios = require("axios");
 const { JSDOM } = require("jsdom");
 
 async function getLessons(date, studioId) {
-  const res = await axios.get(
-    `https://www.b-monster.jp/reserve/?studio_code=${studioId}`
-  );
+  let url = `https://www.b-monster.jp/reserve/?studio_code=${studioId}`;
+  if (studioId == "0004"){
+    url = `https://www.b-monster.jp//reserve/?studio_code=0004&room_id=19`
+  }
+
+  const res = await axios.get(url);
   const dom = new JSDOM(res.data);
   const timeTable = dom.window.document.getElementById("time-table");
   const lessonColumns = timeTable.querySelectorAll(".flex-no-wrap");
