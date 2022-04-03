@@ -8,7 +8,8 @@ const preferences = {
   "0002": JSON.parse(process.env.AOYAMA_PREFERENCES),
   "0003": JSON.parse(process.env.EBISU_PREFERENCES),
   "0004": JSON.parse(process.env.SHINJUKU_PREFERENCES),
-  "0006": JSON.parse(process.env.IKEBUKURO_PREFERENCES)
+  "0006": JSON.parse(process.env.IKEBUKURO_PREFERENCES),
+  "0010": JSON.parse(process.env.SHIBUYA_PREFERENCES)
 };
 
 async function askInfo() {
@@ -87,7 +88,8 @@ const askStudio = {
     { title: "池袋スタジオ", value: "0006" },
     { title: "青山スタジオ", value: "0002" },
     { title: "羽田スタジオ", value: "0007" },
-    { title: "栄スタジオ", value: "0005" }
+    { title: "栄スタジオ", value: "0005" },
+    { title: "渋谷スタジオ", value: "0010" }
   ]
 };
 
